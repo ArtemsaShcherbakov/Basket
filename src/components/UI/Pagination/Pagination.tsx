@@ -8,21 +8,13 @@ import {
 } from "./Pagination.styles";
 
 interface PaginationProps {
-  /** Текущая активная страница */
   currentPage: number;
-  /** Общее количество страниц */
   totalPages: number;
-  /** Обработчик изменения страницы */
   onPageChange: (page: number) => void;
-  /** Максимальное количество отображаемых кнопок страниц */
   maxVisiblePages?: number;
-  /** Показывать кнопки "Первая" и "Последняя" */
   showFirstLast?: boolean;
-  /** Показывать кнопки "Предыдущая" и "Следующая" */
   showPrevNext?: boolean;
-  /** Размер компонента */
   size?: "small" | "medium" | "large";
-  /** Дополнительные CSS-классы */
   className?: string;
 }
 

@@ -3,11 +3,11 @@ import type { PropsWithChildren } from "react";
 import { StyledCard } from "./Card.styles";
 
 interface ICardProps {
-  styles?: any;
+  className?: string;
 }
 
-const Card = ({ children, styles }: PropsWithChildren<ICardProps>) => (
-  <StyledCard {...styles}>{children}</StyledCard>
+const Card = ({ children, className }: PropsWithChildren<ICardProps>) => (
+  <StyledCard className={className}>{children}</StyledCard>
 );
 
 export { Card };

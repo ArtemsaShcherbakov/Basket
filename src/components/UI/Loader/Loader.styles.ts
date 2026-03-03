@@ -5,19 +5,19 @@ const BORDER_SPINER = {
   small: "2px",
   medium: "3px",
   large: "4px",
-};
+} as const;
 
 const SIZE_SPINER = {
   small: "20px",
   medium: "40px",
   large: "60px",
-};
+} as const;
 
 const FONT_SIZE_MESSAGE = {
   small: "12px",
   medium: "14px",
   large: "16px",
-};
+} as const;
 
 const spinAnimation = keyframes`
   0% { transform: rotate(0deg); }
