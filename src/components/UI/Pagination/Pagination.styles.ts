@@ -4,19 +4,60 @@ const GAP_CONTAINER = {
   small: "4px",
   medium: "6px",
   large: "8px",
-};
+} as const;
 
 const SIZE = {
   small: "32px",
   medium: "40px",
   large: "48px",
-};
+} as const;
 
 const FONT_SIZE = {
   small: "16px",
   medium: "18px",
   large: "20px",
+} as const;
+
+const PADDING = {
+  small: "8px",
+  medium: "12px",
+  large: "16px",
+} as const;
+
+const COLORS = {
+  primary: "#2563eb",
+  primaryHover: "#1d4ed8",
+  primaryLight: "#bfdbfe",
+  primaryLightHover: "#dbeafe",
+  textActive: "#ffffff",
+  textInactive: "#1e40af",
+  disabled: {
+    bg: "#e2e8f0",
+    text: "#94a3b8",
+    border: "#e2e8f0",
+  },
+} as const;
+
+const getBackgroundColor = (active?: boolean, disabled?: boolean) => {
+  if (disabled) return COLORS.disabled.bg;
+  if (active) return COLORS.primary;
+  return "#ffffff";
 };
+
+const getTextColor = (active?: boolean, disabled?: boolean) => {
+  if (disabled) return COLORS.disabled.text;
+  if (active) return COLORS.textActive;
+  return COLORS.textInactive;
+};
+
+const getBorderColor = (active?: boolean, disabled?: boolean) => {
+  if (disabled) return COLORS.disabled.border;
+  if (active) return COLORS.primary;
+  return COLORS.primaryLight;
+};
+
+const getHoverBackground = (active?: boolean) =>
+  active ? COLORS.primaryHover : COLORS.primaryLightHover;
 
 const StyledPaginationContainer = styled.nav<{
   size: "small" | "medium" | "large";
@@ -51,32 +92,22 @@ const StyledPageButton = styled.button<{
   justify-content: center;
   min-width: ${({ size }) => SIZE[size]};
   height: ${({ size }) => SIZE[size]};
-  padding: 0
-    ${({ size }) =>
-      size === "small" ? "8px" : size === "medium" ? "12px" : "16px"};
+  padding: 0 ${({ size }) => PADDING[size]};
   font-size: ${({ size }) => FONT_SIZE[size]};
   font-weight: ${({ active }) => (active ? "600" : "400")};
-  color: ${({ active, disabled }) => {
-    if (disabled) return "#94a3b8";
-    return active ? "#ffffff" : "#1e40af";
-  }};
-  background-color: ${({ active, disabled }) => {
-    if (disabled) return "#e2e8f0";
-    return active ? "#2563eb" : "#ffffff";
-  }};
+  color: ${({ active, disabled }) => getTextColor(active, disabled)};
+  background-color: ${({ active, disabled }) =>
+    getBackgroundColor(active, disabled)};
   border: 2px solid
-    ${({ active, disabled }) => {
-      if (disabled) return "#e2e8f0";
-      return active ? "#2563eb" : "#bfdbfe";
-    }};
+    ${({ active, disabled }) => getBorderColor(active, disabled)};
   border-radius: 8px;
   cursor: ${({ disabled }) => (disabled ? "not-allowed" : "pointer")};
   transition: all 0.2s ease-in-out;
   user-select: none;
 
   &:hover:not(:disabled) {
-    background-color: ${({ active }) => (active ? "#1d4ed8" : "#dbeafe")};
-    border-color: #2563eb;
+    background-color: ${({ active }) => getHoverBackground(active)};
+    border-color: ${COLORS.primary};
     transform: translateY(-2px);
     box-shadow:
       0 4px 6px -1px rgba(37, 99, 235, 0.1),
@@ -90,7 +121,7 @@ const StyledPageButton = styled.button<{
 
   &:focus-visible {
     outline: none;
-    ring: 2px solid #3b82f6;
+    ring: 2px solid ${COLORS.primary};
     ring-offset: 2px;
   }
 `;
