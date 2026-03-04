@@ -6,14 +6,14 @@ const Button = ({
   type,
   nameButton,
   textButton,
-  handleOnClick,
+  onClick,
   ariaLabel,
   disabled,
 }: IButtonProps) => (
   <StyledCard
     type={type}
     name={nameButton}
-    onClick={handleOnClick}
+    onClick={onClick}
     aria-label={ariaLabel || textButton}
     disabled={disabled}
   >
