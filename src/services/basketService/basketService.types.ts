@@ -1,10 +1,10 @@
 import type { ICart } from "../../types/basket";
 
-interface IBasketServiceResponse {
+interface IGetCartsServiceResponse {
   carts: ICart[];
   total: number;
   skip: number;
   limit: number;
 }
 
-export type { IBasketServiceResponse };
+export type { IGetCartsServiceResponse };

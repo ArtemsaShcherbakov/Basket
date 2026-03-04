@@ -2,13 +2,30 @@ import { apiClient } from "../api";
 
 import { API_BASKET } from "./basketService.routes";
 
-import type { IBasketServiceResponse } from "./basketService.types";
+import type { ICart } from "../../types";
+import type { IGetCartsServiceResponse } from "./basketService.types";
 
 class BasketService {
-  async getCartsInBasket(limit: number, skip: number) {
+  async getCarts(limit: number, skip: number) {
     try {
-      const response = await apiClient.get<IBasketServiceResponse>(
+      const response = await apiClient.get<IGetCartsServiceResponse>(
         API_BASKET.GET_CARTS(limit, skip),
+      );
+
+      return response;
+    } catch (error: any) {
+      if (error.response?.status === 404) {
+        throw new Error("Withdrawal not found");
+      }
+
+      throw new Error("Failed to fetch withdrawal details");
+    }
+  }
+
+  async getOneCart(cartId: number) {
+    try {
+      const response = await apiClient.get<ICart>(
+        API_BASKET.GET_ONE_CARTS(cartId),
       );
 
       return response;

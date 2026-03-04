@@ -10,7 +10,7 @@ interface IButtonProps {
   textButton?: string;
   classNameIcon?: string;
   ariaLabel?: string;
-  handleOnClick?: (event: EventButtonType) => void;
+  onClick?: (event: EventButtonType) => void;
   disabled?: boolean;
 }
 
