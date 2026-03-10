@@ -16,7 +16,7 @@ API: [`https://dummyjson.com/docs/carts`](https://dummyjson.com/docs/carts)
 
 Приложение задеплойно на **GitHub Pages** и доступно по адресу:
 
-- `https://artemsashcherbakov.github.io/Basket/#/carts`
+- [`https://artemsashcherbakov.github.io/Basket/#/carts`](https://artemsashcherbakov.github.io/Basket/#/carts)
 
 ---
 
