@@ -1,6 +1,10 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { Suspense } from "react";
+import { RouterProvider } from "react-router-dom";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { Carts, Cart } from "./pages";
+
+import { Loader } from "@/components/UI";
+
+import router from "./routes";
 
 const App = () => {
   const queryClient = new QueryClient({
@@ -13,19 +17,16 @@ const App = () => {
         refetchOnReconnect: true,
       },
       mutations: {
-        retry: 0, // мутации не повторяем
+        retry: 0,
       },
     },
   });
 
   return (
     <QueryClientProvider client={queryClient}>
-      <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<Carts />} />
-          <Route path="/:id" element={<Cart />} />
-        </Routes>
-      </BrowserRouter>
+      <Suspense fallback={<Loader fullPage message="Загрузка страницы..." />}>
+        <RouterProvider router={router} />
+      </Suspense>
     </QueryClientProvider>
   );
 };

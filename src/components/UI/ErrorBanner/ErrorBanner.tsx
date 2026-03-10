@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 import {
   StyledBannerContainer,
@@ -21,7 +21,7 @@ const CloseIcon = () => (
   </svg>
 );
 
-export interface ErrorBannerProps {
+interface ErrorBannerProps {
   title?: string;
   message: string;
   onClose?: () => void;
@@ -41,6 +41,17 @@ const ErrorBanner = ({
   const [isVisible, setIsVisible] = useState(true);
   const [isExiting, setIsExiting] = useState(false);
 
+  const titleError = title || "Ошибка";
+
+  const handleClose = useCallback(() => {
+    setIsExiting(true);
+
+    setTimeout(() => {
+      setIsVisible(false);
+      onClose?.();
+    }, 300);
+  }, [onClose]);
+
   // Автоматическое скрытие
   useEffect(() => {
     if (autoHideDuration && autoHideDuration > 0) {
@@ -50,16 +61,7 @@ const ErrorBanner = ({
 
       return () => clearTimeout(timer);
     }
-  }, [autoHideDuration]);
-
-  const handleClose = () => {
-    setIsExiting(true);
-
-    setTimeout(() => {
-      setIsVisible(false);
-      onClose?.();
-    }, 300);
-  };
+  }, [autoHideDuration, handleClose]);
 
   if (!isVisible) return null;
 
@@ -71,7 +73,7 @@ const ErrorBanner = ({
         </StyledIconWrapper>
       )}
       <StyledContentWrapper>
-        <StyledTitle>{title || "Ошибка"}</StyledTitle>
+        <StyledTitle>{titleError}</StyledTitle>
         <StyledMessage>{message}</StyledMessage>
       </StyledContentWrapper>
       {onClose && (

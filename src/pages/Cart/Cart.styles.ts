@@ -1,5 +1,9 @@
 import styled from "@emotion/styled";
 
+const StyledWrapper = styled.section({
+  width: "80%",
+});
+
 const StyledHeader = styled.div`
   display: flex;
   justify-content: space-between;
@@ -11,4 +15,4 @@ const StyledDivider = styled.div`
   margin: 12px 0;
 `;
 
-export { StyledHeader, StyledDivider };
+export { StyledHeader, StyledDivider, StyledWrapper };

@@ -1,26 +1,31 @@
 import { useQuery } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
 
+import { Pagination, ErrorBanner, Loader, Title } from "@/components/UI/index";
+import { ListOfItem } from "@/components/ListOfItem";
 import { CardCart } from "./components/CardCart";
-import { Pagination, ErrorBanner, Loader, Title } from "../../components/UI";
-import { ListOfItem } from "../../components/ListOfItem";
 
-import { cartStore } from "../../store/cartStore";
+import { cartStore } from "@/store/cartStore";
 
-import { basketService } from "../../services/basketService";
+import { basketService } from "@/services/basketService";
+
+import { ROUTE_PATHS } from "@/constants";
 
 import { StyledWrapper } from "./Carts.styles";
 
 const Carts = () => {
   const navigate = useNavigate();
 
-  const { pagination, setPage, setSelectedCart } = cartStore();
-
-  const { currentPage, skip, limit } = pagination;
+  const {
+    pagination: { skip, limit, currentPage },
+    setSelectedCart,
+    setPage,
+  } = cartStore();
 
   const { data, isError, isPending, error } = useQuery({
-    queryKey: ["carts", skip, limit],
+    queryKey: ["carts", "list", skip, limit],
     queryFn: () => basketService.getCarts(limit, skip),
+    staleTime: 60 * 1000,
   });
 
   if (isPending) {
@@ -37,7 +42,7 @@ const Carts = () => {
   const handlerGoToCart = (cartId: number) => {
     setSelectedCart(cartId);
 
-    navigate(`/${cartId}`);
+    navigate(ROUTE_PATHS.CART(cartId));
   };
 
   return (
@@ -45,6 +50,7 @@ const Carts = () => {
       <Title text="Корзины" />
       <ListOfItem
         list={carts}
+        getKey={(cart) => cart.id}
         renderItem={(cart) => (
           <CardCart cart={cart} onClick={handlerGoToCart} />
         )}
