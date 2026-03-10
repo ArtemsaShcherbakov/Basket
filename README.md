@@ -1,42 +1,181 @@
-# React + TypeScript + Vite
+## Basket SPA (DummyJSON carts)
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+SPA‑приложение для работы с корзинами пользователей на основе публичного API DummyJSON.
 
-Currently, two official plugins are available:
+Приложение позволяет:
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- **просматривать список корзин** с пагинацией;
+- **переходить в детали корзины**;
+- **редактировать корзину** (изменять количество товара, удалять товар) с оптимистичными обновлениями.
 
-## React Compiler
+API: [`https://dummyjson.com/docs/carts`](https://dummyjson.com/docs/carts)
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+---
+
+### 📦 Деплой
+
+Приложение задеплойно на **GitHub Pages** и доступно по адресу:
+
+- `https://artemsashcherbakov.github.io/Basket/#/carts`
+
+---
+
+### 🚀 Запуск проекта
+
+- **Установка зависимостей**
+
+```bash
+npm install
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+- **Запуск в dev‑режиме**
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+npm run dev
 ```
+
+Локальный адрес разработки зависит от настроек Vite (по умолчанию это `http://localhost:5173`).
+
+- **Сборка для продакшена**
+
+```bash
+npm run build
+```
+
+- **Превью собранной версии**
+
+```bash
+npm run preview
+```
+
+Проект подготовлен к деплою на GitHub Pages:
+
+- используется `createHashRouter` из `react-router-dom` для корректной работы роутинга;
+- в `vite.config.ts` задано `base: "./"` для относительных путей;
+- базовый URL API настраивается через `.env` (`VITE_API_URL`).
+
+---
+
+### 🛠 Tech Stack
+
+- **React + Vite**
+- **TypeScript**
+- **React Router (`createHashRouter`)**
+- **@tanstack/react-query** — загрузка данных и кэширование
+- **Zustand** — глобальное состояние пагинации и выбранной корзины
+- **@emotion/styled** — UI‑компоненты и стили
+- Нативный `fetch` через обёртку `ApiClient`
+
+---
+
+### 📡 Используемые эндпоинты DummyJSON
+
+- **Список корзин**
+
+  - `GET /carts?limit={limit}&skip={skip}`
+  - используется для страницы списка корзин с пагинацией.
+
+- **Одна корзина**
+
+  - `GET /carts/:id`
+  - используется на детальной странице корзины.
+
+- **Обновление корзины**
+
+  - `PUT /carts/:id`
+  - тело запроса формируется в `ApiClient` в формате:
+
+    ```json
+    {
+      "merge": false,
+      "products": [{ "id": 1, "quantity": 5 }]
+    }
+    ```
+
+---
+
+### 🧩 Реализованный функционал
+
+#### 1️⃣ Страница списка корзин (`/carts`)
+
+- Получение списка корзин через `react-query` (`["carts","list",skip,limit]`).
+- Отображаются:
+  - **ID корзины**;
+  - **userId**;
+  - **количество товаров**;
+  - **общая сумма**;
+  - кнопка перехода в детали.
+- Реализована **пагинация**:
+  - `limit`, `skip`, `currentPage` хранятся в Zustand‑сторе;
+  - при смене страницы выполняется повторный запрос.
+- Обработаны состояния:
+  - **loading** — показывается полноэкранный `Loader`;
+  - **error** — показывается `ErrorBanner` с сообщением.
+- При переходе на детали и возврате:
+  - состояние пагинации и выбранной корзины берётся из Zustand и сохраняется.
+
+#### 2️⃣ Детальная страница корзины (`/cart/:id`)
+
+- Роут настраивается через `createHashRouter` и константы `ROUTE_PATHS`.
+- Отображаются:
+  - **ID корзины**;
+  - **userId**;
+  - **список товаров** (название, цена, количество, итог по товару);
+  - **общая сумма корзины**.
+- Состояния:
+  - **loading** — общий `Loader` для загрузки корзины и обновлений;
+  - **error** — `ErrorBanner` с текстом ошибки (включая 404).
+
+#### 3️⃣ Редактирование корзины
+
+- На детальной странице можно:
+  - **изменять количество товара** (`+` / `-` с локальным стейтом и дебаунсом отправки на сервер);
+  - **удалять товар** из корзины.
+- Логика обновления:
+  - изменение количества и удаление вызывают `useUpdateCart` (React Query `useMutation`);
+  - реализовано **оптимистичное обновление**:
+    - сразу обновляется кеш детали корзины (`["cart", id]`);
+    - синхронно обновляется корзина в списке (`["carts","list",skip,limit]`);
+    - при ошибке состояние откатывается;
+    - при успехе данные заменяются ответом с сервера и затем инвалидируются.
+
+#### 4️⃣ Глобальный стейт (Zustand)
+
+Хранится:
+
+- `pagination`:
+  - `limit`
+  - `skip`
+  - `currentPage`
+- `selectedCartId` — последняя выбранная корзина.
+
+Все эти значения используются и на списке, и на деталях, что обеспечивает предсказуемую навигацию и сохранение состояния между страницами.
+
+---
+
+### 🎨 UI и компоненты
+
+- Стилизация через `@emotion/styled`.
+- Общие UI‑компоненты:
+  - `Card`, `Button`, `Pagination`, `Loader`, `ErrorBanner`, `TextRow`, `Title`, `ListOfItem`.
+- Состояния компонентов:
+  - `Button`:
+    - состояния `hover`, `active`, `disabled`, `loading` (спиннер + блокировка клика);
+  - `Pagination`:
+    - доступность/блокировка кнопок, aria‑атрибуты, удобный UX;
+  - `ErrorBanner`:
+    - авто‑скрытие, анимация закрытия, иконки.
+
+---
+
+### 📁 Архитектура проекта (кратко)
+
+- `src/pages` — страницы `Carts` и `Cart` + локальные компоненты.
+- `src/components` — переиспользуемые UI‑компоненты и списки.
+- `src/services`:
+  - `api.ts` — универсальный `ApiClient` с типизацией и обработкой ошибок;
+  - `basketService` — слой работы с корзинами (эндпоинты DummyJSON).
+- `src/store/cartStore` — Zustand‑стор для глобального состояния.
+- `src/utils` — утилиты форматирования (`createPrice`, `createId`, `createTotalProducts`) и `debounce`.
+- `src/routes.tsx` — конфигурация роутера с `React.lazy` + `Suspense` (lazy‑загрузка страниц).
+
