@@ -1,6 +1,6 @@
 import { useParams } from "react-router-dom";
 
-import { useGetCart, useControllCart } from "./Cart.hooks";
+import { useCartQuery, useControllCart } from "./Cart.hooks";
 
 import { ListOfItem } from "@/components/ListOfItem";
 import { ErrorBanner, Loader, Button, TextRow, Title } from "@/components/UI";
@@ -11,7 +11,7 @@ import { StyledDivider, StyledHeader, StyledWrapper } from "./Cart.styles";
 const Cart = () => {
   const { id: selectedCartId } = useParams();
 
-  const { data, isError, isPending, error } = useGetCart(selectedCartId);
+  const { data, isError, isPending, error } = useCartQuery(selectedCartId);
   const {
     isPendingUpdate = false,
     isErrorUpdate = false,

@@ -8,6 +8,7 @@ import { CardCart } from "./components/CardCart";
 import { cartStore } from "@/store/cartStore";
 
 import { basketService } from "@/services/basketService";
+import { CART_KEYS } from "@/services/basketService/basketService.keys";
 
 import { ROUTE_PATHS } from "@/constants";
 
@@ -23,7 +24,7 @@ const Carts = () => {
   } = cartStore();
 
   const { data, isError, isPending, error } = useQuery({
-    queryKey: ["carts", "list", skip, limit],
+    queryKey: CART_KEYS.LIST(skip, limit),
     queryFn: () => basketService.getCarts(limit, skip),
     staleTime: 60 * 1000,
   });

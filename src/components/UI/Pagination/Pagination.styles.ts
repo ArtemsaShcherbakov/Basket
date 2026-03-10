@@ -1,5 +1,11 @@
 import styled from "@emotion/styled";
 
+const BREAKPOINTS = {
+  mobile: "480px",
+  tablet: "768px",
+  desktop: "1024px",
+} as const;
+
 const GAP_CONTAINER = {
   small: "4px",
   medium: "6px",
@@ -12,16 +18,34 @@ const SIZE = {
   large: "48px",
 } as const;
 
+const SIZE_MOBILE = {
+  small: "28px",
+  medium: "36px",
+  large: "40px",
+} as const;
+
 const FONT_SIZE = {
   small: "16px",
   medium: "18px",
   large: "20px",
 } as const;
 
+const FONT_SIZE_MOBILE = {
+  small: "14px",
+  medium: "16px",
+  large: "18px",
+} as const;
+
 const PADDING = {
   small: "8px",
   medium: "12px",
   large: "16px",
+} as const;
+
+const PADDING_MOBILE = {
+  small: "6px",
+  medium: "8px",
+  large: "12px",
 } as const;
 
 const COLORS = {
@@ -73,6 +97,20 @@ const StyledPaginationContainer = styled.nav<{
   align-items: center;
   gap: ${({ size }) => GAP_CONTAINER[size]};
   padding: 16px;
+
+  @media (max-width: ${BREAKPOINTS.tablet}) {
+    gap: ${({ size }) => {
+      const gap = parseInt(GAP_CONTAINER[size]);
+      return `${Math.max(gap - 2, 2)}px`;
+    }};
+    padding: 12px;
+  }
+
+  @media (max-width: ${BREAKPOINTS.mobile}) {
+    gap: 2px;
+    padding: 8px;
+    flex-wrap: wrap;
+  }
 `;
 
 const StyledPaginationList = styled.ul`
@@ -82,10 +120,19 @@ const StyledPaginationList = styled.ul`
   margin: 0;
   padding: 0;
   list-style: none;
+
+  @media (max-width: ${BREAKPOINTS.mobile}) {
+    flex-wrap: wrap;
+    justify-content: center;
+  }
 `;
 
 const StyledPaginationItem = styled.li`
   display: inline-flex;
+
+  @media (max-width: ${BREAKPOINTS.mobile}) {
+    margin: 2px;
+  }
 `;
 
 const StyledPageButton = styled.button<{
@@ -111,13 +158,56 @@ const StyledPageButton = styled.button<{
   transition: all 0.2s ease-in-out;
   user-select: none;
 
+  @media (max-width: ${BREAKPOINTS.tablet}) {
+    min-width: ${({ size }) => {
+      const size_ = parseInt(SIZE[size]);
+      return `${Math.max(size_ - 4, 32)}px`;
+    }};
+    height: ${({ size }) => {
+      const size_ = parseInt(SIZE[size]);
+      return `${Math.max(size_ - 4, 32)}px`;
+    }};
+    padding: 0
+      ${({ size }) => {
+        const padding = parseInt(PADDING[size]);
+        return `${Math.max(padding - 2, 6)}px`;
+      }};
+    border-width: 1.5px;
+  }
+
+  @media (max-width: ${BREAKPOINTS.mobile}) {
+    min-width: ${({ size }) => SIZE_MOBILE[size]};
+    height: ${({ size }) => SIZE_MOBILE[size]};
+    padding: 0 ${({ size }) => PADDING_MOBILE[size]};
+    font-size: ${({ size }) => FONT_SIZE_MOBILE[size]};
+    border-width: 1px;
+    border-radius: 6px;
+
+    /* Скрываем текст навигации на мобильных */
+    ${({ children }) =>
+      typeof children === "string" &&
+      (children === "Предыдущая" ||
+        children === "Следующая" ||
+        children === "Первая" ||
+        children === "Последняя") &&
+      `
+        span {
+          display: none;
+        }
+    `}
+  }
+
   &:hover:not(:disabled) {
     background-color: ${({ active }) => getHoverBackground(active)};
     border-color: ${COLORS.primary};
-    transform: translateY(-2px);
-    box-shadow:
-      0 4px 6px -1px rgba(37, 99, 235, 0.1),
-      0 2px 4px -1px rgba(37, 99, 235, 0.06);
+
+    /* Анимация только на десктопе */
+    @media (min-width: ${BREAKPOINTS.desktop}) {
+      transform: translateY(-2px);
+      box-shadow:
+        0 4px 6px -1px rgba(37, 99, 235, 0.1),
+        0 2px 4px -1px rgba(37, 99, 235, 0.06);
+    }
   }
 
   &:active:not(:disabled) {
@@ -129,6 +219,14 @@ const StyledPageButton = styled.button<{
     outline: none;
     ring: 2px solid ${COLORS.primary};
     ring-offset: 2px;
+  }
+
+  /* Для мобильных убираем сложные эффекты */
+  @media (max-width: ${BREAKPOINTS.mobile}) {
+    &:hover:not(:disabled) {
+      transform: none;
+      box-shadow: none;
+    }
   }
 `;
 
@@ -142,6 +240,23 @@ const StyledEllipsis = styled.span<{ size: "small" | "medium" | "large" }>`
   font-size: ${({ size }) => FONT_SIZE[size]};
   font-weight: 600;
   letter-spacing: 2px;
+
+  @media (max-width: ${BREAKPOINTS.tablet}) {
+    min-width: ${({ size }) => {
+      const size_ = parseInt(SIZE[size]);
+      return `${Math.max(size_ - 4, 32)}px`;
+    }};
+    height: ${({ size }) => {
+      const size_ = parseInt(SIZE[size]);
+      return `${Math.max(size_ - 4, 32)}px`;
+    }};
+  }
+
+  @media (max-width: ${BREAKPOINTS.mobile}) {
+    min-width: ${({ size }) => SIZE_MOBILE[size]};
+    height: ${({ size }) => SIZE_MOBILE[size]};
+    font-size: ${({ size }) => FONT_SIZE_MOBILE[size]};
+  }
 `;
 
 const NAVIGATION_ICON_TRANCFORM = {
@@ -159,6 +274,11 @@ const StyledNavigationIcon = styled.span<{
   height: 20px;
   position: relative;
 
+  @media (max-width: ${BREAKPOINTS.mobile}) {
+    width: 16px;
+    height: 16px;
+  }
+
   &::before {
     content: "";
     position: absolute;
@@ -170,6 +290,13 @@ const StyledNavigationIcon = styled.span<{
     height: 10px;
     border-top: 2px solid currentColor;
     border-right: 2px solid currentColor;
+
+    @media (max-width: ${BREAKPOINTS.mobile}) {
+      width: 8px;
+      height: 8px;
+      border-top-width: 1.5px;
+      border-right-width: 1.5px;
+    }
   }
 `;
 

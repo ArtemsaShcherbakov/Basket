@@ -5,6 +5,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { cartStore } from "@/store/cartStore";
 
 import { basketService } from "@/services/basketService";
+import { CART_KEYS } from "@/services/basketService/basketService.keys";
 
 import { ROUTE_PATHS } from "@/constants";
 
@@ -13,19 +14,19 @@ import type { IProduct, ICart } from "@/types";
 
 import { createPrice, createId } from "@/utils";
 
-export const useGetCart = (selectedCartId?: string) => {
+export const useCartQuery = (selectedCartId?: string) => {
   const cartId = Number(selectedCartId);
   const isValidId = Number.isFinite(cartId) && cartId > 0;
 
   return useQuery({
-    queryKey: ["cart", selectedCartId],
+    queryKey: CART_KEYS.DETAIL(selectedCartId),
     queryFn: () => basketService.getOneCart(cartId),
     enabled: isValidId,
     staleTime: 60 * 1000,
   });
 };
 
-export const useUpdateCart = (selectedCartId?: string) => {
+export const useCartMutations = (selectedCartId?: string) => {
   const queryClient = useQueryClient();
 
   const {
@@ -33,14 +34,16 @@ export const useUpdateCart = (selectedCartId?: string) => {
   } = cartStore();
 
   const cartId = Number(selectedCartId);
+  const cartDetailKey = CART_KEYS.DETAIL(selectedCartId);
+  const cartsListKey = CART_KEYS.LIST(skip, limit);
 
   const handleSuccessUpdate = (updatedCart: ICart | null) => {
     if (!updatedCart) return;
 
-    queryClient.setQueryData(["cart", selectedCartId], updatedCart);
+    queryClient.setQueryData(cartDetailKey, updatedCart);
 
     queryClient.setQueryData<IGetCartsServiceResponse>(
-      ["carts", "list", skip, limit],
+      cartsListKey,
       (oldData) => {
         if (!oldData) return oldData;
 
@@ -63,7 +66,7 @@ export const useUpdateCart = (selectedCartId?: string) => {
 
 export const useControllCart = (data?: ICart, selectedCartId?: string) => {
   const navigate = useNavigate();
-  const { isError, isPending, error, mutate } = useUpdateCart(selectedCartId);
+  const { isError, isPending, error, mutate } = useCartMutations(selectedCartId);
 
   const { id = 0, userId = 0, products = [], total = 0 } = data || {};
 
@@ -75,6 +78,7 @@ export const useControllCart = (data?: ICart, selectedCartId?: string) => {
       if (indexProduct === -1) return;
 
       const newList = products.toSpliced(indexProduct, 1);
+
       mutate(newList);
     },
     [products, mutate],

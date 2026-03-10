@@ -3,13 +3,8 @@ import { apiClient } from "../api";
 import { API_BASKET } from "./basketService.routes";
 
 import type { ICart, IProduct } from "@/types";
+import type { ApiError } from "../types";
 import type { IGetCartsServiceResponse } from "./basketService.types";
-
-type ApiError = {
-  message?: string;
-  status?: number;
-  data?: unknown;
-};
 
 class BasketService {
   private handleCartError(error: unknown, defaultMessage: string): never {
