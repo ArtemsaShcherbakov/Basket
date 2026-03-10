@@ -1,8 +1,4 @@
-type ApiError = {
-  message: string;
-  status?: number;
-  data?: unknown;
-};
+import type { ApiError } from "./types";
 
 type HeadersInit = Record<string, string>;
 
@@ -79,18 +75,6 @@ class ApiClient {
     return this.request<T>(endpoint, {
       ...options,
       method: "PUT",
-      body: data ? JSON.stringify({ merge: false, products: data }) : undefined,
-    });
-  }
-
-  public async delete<T>(
-    endpoint: string,
-    data?: unknown,
-    options?: RequestInit,
-  ): Promise<T> {
-    return this.request<T>(endpoint, {
-      ...options,
-      method: "DELETE",
       body: data ? JSON.stringify({ merge: false, products: data }) : undefined,
     });
   }
