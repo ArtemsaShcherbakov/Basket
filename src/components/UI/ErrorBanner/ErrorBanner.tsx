@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 import {
   StyledBannerContainer,
@@ -43,6 +43,15 @@ const ErrorBanner = ({
 
   const titleError = title || "Ошибка";
 
+  const handleClose = useCallback(() => {
+    setIsExiting(true);
+
+    setTimeout(() => {
+      setIsVisible(false);
+      onClose?.();
+    }, 300);
+  }, [onClose]);
+
   // Автоматическое скрытие
   useEffect(() => {
     if (autoHideDuration && autoHideDuration > 0) {
@@ -52,16 +61,7 @@ const ErrorBanner = ({
 
       return () => clearTimeout(timer);
     }
-  }, [autoHideDuration]);
-
-  const handleClose = () => {
-    setIsExiting(true);
-
-    setTimeout(() => {
-      setIsVisible(false);
-      onClose?.();
-    }, 300);
-  };
+  }, [autoHideDuration, handleClose]);
 
   if (!isVisible) return null;
 

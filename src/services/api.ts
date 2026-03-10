@@ -1,7 +1,7 @@
 type ApiError = {
   message: string;
   status?: number;
-  data?: any;
+  data?: unknown;
 };
 
 type HeadersInit = Record<string, string>;
@@ -73,7 +73,7 @@ class ApiClient {
 
   public async put<T>(
     endpoint: string,
-    data?: any,
+    data?: unknown,
     options?: RequestInit,
   ): Promise<T> {
     return this.request<T>(endpoint, {
@@ -85,7 +85,7 @@ class ApiClient {
 
   public async delete<T>(
     endpoint: string,
-    data?: any,
+    data?: unknown,
     options?: RequestInit,
   ): Promise<T> {
     return this.request<T>(endpoint, {

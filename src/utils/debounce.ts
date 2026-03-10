@@ -1,4 +1,4 @@
-type AnyFunction = (...args: any[]) => void;
+type AnyFunction = (...args: unknown[]) => void;
 
 type DebouncedFunction<F extends AnyFunction> = (
   ...args: Parameters<F>
