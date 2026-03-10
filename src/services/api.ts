@@ -11,7 +11,7 @@ class ApiClient {
   private defaultHeaders: HeadersInit;
 
   constructor() {
-    this.baseUrl = import.meta.env.VITE_API_URL ?? "https://dummyjson.com";
+    this.baseUrl = import.meta.env.VITE_API_URL ?? "http://localhost:3000";
     this.defaultHeaders = {
       "Content-Type": "application/json",
       Accept: "application/json",
