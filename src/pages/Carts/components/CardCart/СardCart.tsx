@@ -1,6 +1,8 @@
-import { Card, Button, TextRow } from "../../../../components/UI";
+import { Card, Button, TextRow } from "@/components/UI";
 
-import type { ICart } from "../../../../types";
+import { createPrice, createTotalProducts, createId } from "@/utils";
+
+import type { ICart } from "@/types";
 
 interface ICardCartProps {
   cart: ICart;
@@ -10,15 +12,20 @@ interface ICardCartProps {
 const CardCart = ({ cart, onClick }: ICardCartProps) => {
   const { id, userId, totalProducts, total } = cart;
 
-  const click = () => onClick(id);
+  const cartId = createId(id);
+  const currentUserId = createId(userId);
+  const numberOfProducts = createTotalProducts(totalProducts);
+  const totalPrice = createPrice(total);
+
+  const clickCard = () => onClick(id);
 
   return (
-    <Card onClick={click}>
-      <TextRow label="Корзина:" value={`ID ${id}`} />
-      <TextRow label="Пользователь:" value={`ID ${userId}`} />
-      <TextRow label="Количество товаров:" value={`${totalProducts} шт.`} />
-      <TextRow label="Общая сумма:" value={`$${total}`} />
-      <Button type="button" textButton="Подробнее" onClick={click} />
+    <Card onClick={clickCard}>
+      <TextRow label="Корзина:" value={cartId} />
+      <TextRow label="Пользователь:" value={currentUserId} />
+      <TextRow label="Количество товаров:" value={numberOfProducts} />
+      <TextRow label="Общая сумма:" value={totalPrice} />
+      <Button type="button" textButton="Подробнее" onClick={clickCard} />
     </Card>
   );
 };

@@ -1,3 +1,5 @@
+import { getPageNumbers } from "./Pagination.utils";
+
 import {
   StyledPaginationContainer,
   StyledPaginationList,
@@ -28,58 +30,13 @@ const Pagination = ({
   size = "medium",
   className,
 }: PaginationProps) => {
-  // Генерация массива страниц для отображения
-  const getPageNumbers = (): (number | "ellipsis")[] => {
-    const pages: (number | "ellipsis")[] = [];
-
-    if (totalPages <= maxVisiblePages) {
-      // Если страниц мало, показываем все
-      for (let i = 1; i <= totalPages; i++) {
-        pages.push(i);
-      }
-    } else {
-      // Вычисляем границы
-      const leftBound = Math.max(
-        1,
-        currentPage - Math.floor(maxVisiblePages / 2),
-      );
-      const rightBound = Math.min(totalPages, leftBound + maxVisiblePages - 1);
-
-      // Корректируем leftBound, если rightBound достиг максимума
-      const adjustedLeftBound = Math.max(1, rightBound - maxVisiblePages + 1);
-
-      // Добавляем первую страницу и многоточие если нужно
-      if (adjustedLeftBound > 2) {
-        pages.push(1);
-        pages.push("ellipsis");
-      } else if (adjustedLeftBound === 2) {
-        pages.push(1);
-      }
-
-      // Добавляем основные страницы
-      for (let i = adjustedLeftBound; i <= rightBound; i++) {
-        pages.push(i);
-      }
-
-      // Добавляем последнюю страницу и многоточие если нужно
-      if (rightBound < totalPages - 1) {
-        pages.push("ellipsis");
-        pages.push(totalPages);
-      } else if (rightBound === totalPages - 1) {
-        pages.push(totalPages);
-      }
-    }
-
-    return pages;
-  };
+  const pageNumbers = getPageNumbers(currentPage, totalPages, maxVisiblePages);
 
   const handlePageChange = (page: number) => {
     if (page >= 1 && page <= totalPages && page !== currentPage) {
       onPageChange(page);
     }
   };
-
-  const pageNumbers = getPageNumbers();
 
   return (
     <StyledPaginationContainer size={size} className={className}>

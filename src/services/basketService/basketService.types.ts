@@ -1,4 +1,4 @@
-import type { ICart } from "../../types/basket";
+import type { ICart } from "@/types";
 
 interface IGetCartsServiceResponse {
   carts: ICart[];

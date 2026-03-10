@@ -11,7 +11,7 @@ class ApiClient {
   private defaultHeaders: HeadersInit;
 
   constructor() {
-    this.baseUrl = "https://dummyjson.com"; // Нужно убрать в .env
+    this.baseUrl = import.meta.env.VITE_API_URL ?? "https://dummyjson.com";
     this.defaultHeaders = {
       "Content-Type": "application/json",
       Accept: "application/json",
@@ -69,6 +69,30 @@ class ApiClient {
 
   public async get<T>(endpoint: string, options?: RequestInit): Promise<T> {
     return this.request<T>(endpoint, { ...options, method: "GET" });
+  }
+
+  public async put<T>(
+    endpoint: string,
+    data?: any,
+    options?: RequestInit,
+  ): Promise<T> {
+    return this.request<T>(endpoint, {
+      ...options,
+      method: "PUT",
+      body: data ? JSON.stringify({ merge: false, products: data }) : undefined,
+    });
+  }
+
+  public async delete<T>(
+    endpoint: string,
+    data?: any,
+    options?: RequestInit,
+  ): Promise<T> {
+    return this.request<T>(endpoint, {
+      ...options,
+      method: "DELETE",
+      body: data ? JSON.stringify({ merge: false, products: data }) : undefined,
+    });
   }
 }
 

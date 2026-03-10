@@ -1,55 +1,61 @@
-import { useQuery } from "@tanstack/react-query";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams } from "react-router-dom";
 
+import { useGetCart, useControllCart } from "./Cart.hooks";
+
+import { ListOfItem } from "@/components/ListOfItem";
+import { ErrorBanner, Loader, Button, TextRow, Title } from "@/components/UI";
 import { CardProduct } from "./components/CardProduct";
-import {
-  ErrorBanner,
-  Loader,
-  Button,
-  TextRow,
-  Title,
-} from "../../components/UI";
-import { ListOfItem } from "../../components/ListOfItem";
 
-import { basketService } from "../../services/basketService";
-
-import { StyledDivider, StyledHeader } from "./Cart.styles";
+import { StyledDivider, StyledHeader, StyledWrapper } from "./Cart.styles";
 
 const Cart = () => {
   const { id: selectedCartId } = useParams();
-  const navigate = useNavigate();
 
-  const { data, isError, isPending, error } = useQuery({
-    queryKey: ["cart", selectedCartId],
-    queryFn: () => basketService.getOneCart(Number(selectedCartId)),
-  });
+  const { data, isError, isPending, error } = useGetCart(selectedCartId);
+  const {
+    isPendingUpdate = false,
+    isErrorUpdate = false,
+    errorUpdate = null,
+    title = "",
+    cartPrice = "",
+    currentUserId = "",
+    handlerBackPage = () => {},
+    removeProduct = () => {},
+    updateProduct = () => {},
+  } = useControllCart(data, selectedCartId);
 
   if (isPending) {
     return <Loader fullPage message="Загрузка..." />;
   }
 
-  if (isError) {
-    return <ErrorBanner message={error.message} />;
+  if (isError || isErrorUpdate) {
+    const errorMessage = error?.message || errorUpdate?.message || "";
+
+    return <ErrorBanner message={errorMessage} />;
   }
 
-  const { id, userId, products, total } = data;
-
-  const handlerBackPage = () => navigate("/");
-
   return (
-    <section>
+    <StyledWrapper>
       <StyledHeader>
-        <Title text={`Корзина #${id}`} />
+        <Title text={title} />
         <Button type="button" textButton="Назад" onClick={handlerBackPage} />
       </StyledHeader>
-      <TextRow label="Пользователь:" value={`ID ${userId}`} />
+      <TextRow label="Пользователь:" value={currentUserId} />
       <StyledDivider />
       <ListOfItem
-        list={products}
-        renderItem={(product) => <CardProduct product={product} />}
+        list={data.products}
+        getKey={(product) => product.id}
+        renderItem={(product) => (
+          <CardProduct
+            product={product}
+            isLoadingRemove={isPendingUpdate}
+            updateProduct={updateProduct}
+            removeProduct={removeProduct}
+          />
+        )}
       />
-      <TextRow label="Общая сумма:" value={`$${total.toFixed(2)}`} isTotal />
-    </section>
+      <TextRow label="Общая сумма:" value={cartPrice} isTotal />
+    </StyledWrapper>
   );
 };
 

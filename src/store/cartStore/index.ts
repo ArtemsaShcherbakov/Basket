@@ -7,7 +7,7 @@ export const cartStore = create<ICartState>((set) => ({
   pagination: {
     limit: 9, // сколько элементов на странице
     skip: 0, // сколько пропустить
-    currentPage: 1, // текущая страница (для удобства UI)
+    currentPage: 1, // текущая страница
   },
 
   setSelectedCart: (cartId: number) => set({ selectedCartId: cartId }),

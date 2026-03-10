@@ -21,7 +21,7 @@ const CloseIcon = () => (
   </svg>
 );
 
-export interface ErrorBannerProps {
+interface ErrorBannerProps {
   title?: string;
   message: string;
   onClose?: () => void;
@@ -40,6 +40,8 @@ const ErrorBanner = ({
 }: ErrorBannerProps) => {
   const [isVisible, setIsVisible] = useState(true);
   const [isExiting, setIsExiting] = useState(false);
+
+  const titleError = title || "Ошибка";
 
   // Автоматическое скрытие
   useEffect(() => {
@@ -71,7 +73,7 @@ const ErrorBanner = ({
         </StyledIconWrapper>
       )}
       <StyledContentWrapper>
-        <StyledTitle>{title || "Ошибка"}</StyledTitle>
+        <StyledTitle>{titleError}</StyledTitle>
         <StyledMessage>{message}</StyledMessage>
       </StyledContentWrapper>
       {onClose && (

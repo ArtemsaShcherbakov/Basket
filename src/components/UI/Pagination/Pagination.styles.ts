@@ -40,19 +40,25 @@ const COLORS = {
 
 const getBackgroundColor = (active?: boolean, disabled?: boolean) => {
   if (disabled) return COLORS.disabled.bg;
+
   if (active) return COLORS.primary;
+
   return "#ffffff";
 };
 
 const getTextColor = (active?: boolean, disabled?: boolean) => {
   if (disabled) return COLORS.disabled.text;
+
   if (active) return COLORS.textActive;
+
   return COLORS.textInactive;
 };
 
 const getBorderColor = (active?: boolean, disabled?: boolean) => {
   if (disabled) return COLORS.disabled.border;
+
   if (active) return COLORS.primary;
+
   return COLORS.primaryLight;
 };
 
