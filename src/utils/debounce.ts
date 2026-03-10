@@ -1,16 +1,12 @@
-type AnyFunction = (...args: unknown[]) => void;
+type DebouncedFunction<TArgs extends unknown[]> = (...args: TArgs) => void;
 
-type DebouncedFunction<F extends AnyFunction> = (
-  ...args: Parameters<F>
-) => void;
-
-export const debounce = <F extends AnyFunction>(
-  fn: F,
+export const debounce = <TArgs extends unknown[]>(
+  fn: (...args: TArgs) => void,
   delay: number = 300,
-): DebouncedFunction<F> => {
+): DebouncedFunction<TArgs> => {
   let timeoutId: ReturnType<typeof setTimeout> | undefined;
 
-  return (...args: Parameters<F>) => {
+  return (...args: TArgs) => {
     if (timeoutId) {
       clearTimeout(timeoutId);
     }
